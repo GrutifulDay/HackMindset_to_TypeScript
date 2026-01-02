@@ -1,0 +1,31 @@
+# Ignorování systémových souborů
+.DS_Store
+
+# Ignorování node_modules
+node_modules/
+
+# Ignorování prostředí
+.env
+.env.example
+
+# Logy
+nohup.out
+*.log
+
+# Ignorování build souborů
+dist/
+build/
+
+# Ignorování závislostí v backendu a frontendovém projektu
+backend/node_modules/
+frontend/node_modules/
+frontend/text
+
+# Ignorování verzovacích souborů
+.vscode/
+.idea/
+
+backend/cert/
+
+text
+

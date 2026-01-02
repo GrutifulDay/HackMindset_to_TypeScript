@@ -1,0 +1,25 @@
+{
+  "dependencies": {
+    "@fontsource/jetbrains-mono": "^5.2.5",
+    "gsap": "^3.13.0"
+  },
+  "name": "hackmindset",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/GrutifulDay/HackMindset.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/GrutifulDay/HackMindset/issues"
+  },
+  "homepage": "https://github.com/GrutifulDay/HackMindset#readme"
+}

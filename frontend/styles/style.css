@@ -1,0 +1,53 @@
+body {
+  width: 100%;         
+  max-width: 550px;          
+  min-width: 450px;          
+  margin: 0 auto;           
+  padding: 16px;               
+
+  background: linear-gradient(to left, rgba(255, 255, 255, 0.887), rgba(240, 240, 240, 0.873)); 
+  font-family: 'JetBrains Mono', monospace;
+  text-align: center;
+  object-fit: contain;
+  box-shadow: 0 0 8px rgba(78, 112, 166, 0.6);
+
+  box-sizing: border-box;    
+  border: 2px solid #6c6c7a;
+}
+
+h2 {
+  font-size: 1.3em;
+  color: #273E64;
+  text-transform: uppercase;
+  margin-top: 21px;
+}
+
+h3 {
+  font-size: 1.2em;
+  color: #273E64;
+  margin-top: -3px;
+}
+
+p,
+li {
+  font-size: 1em;
+  color:#05054e;
+}
+
+body.fade-out {
+  opacity: 0;
+  transition: opacity 0.4s ease-in-out;
+}
+
+
+
+
+  
+  
+   
+  
+  
+  
+
+    
+  

@@ -1,0 +1,18 @@
+{
+    "year": 2025,
+    "month": 12,
+    "day": 8,
+  
+    "eventYear": "1970",
+  
+    "title": {
+      "cz": "Demo verze: Zrození paměti: první DRAM čip",
+      "en": "Demo version: The Birth of Memory: the First DRAM Chip"
+    },
+  
+    "nostalgiggle": {
+      "cz": "V roce 1970 uvedl Intel čip 1103 – první komerčně úspěšnou DRAM. Tohle byl okamžik, kdy se počítače mohly začít zmenšovat, zrychlovat a stát levnějšími. Předtím se používala magnetická ferritová jádra – obrovské, drahé a pomalé. DRAM poprvé umožnila uložit velké množství dat na maličký čip. Byl to tichý, ale zásadní začátek digitální éry.",
+      "en": "In 1970, Intel introduced the 1103 chip – the first commercially successful DRAM. This was the moment computers could finally become smaller, faster, and far cheaper. Before DRAM, memory relied on magnetic core arrays – huge, expensive, and slow. DRAM allowed storing large amounts of data on a tiny chip. It was the quiet but essential beginning of the digital age."
+    }
+  }
+  

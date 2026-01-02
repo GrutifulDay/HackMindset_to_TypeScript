@@ -1,0 +1,23 @@
+.nasa-url {
+    transition: text-decoration 0.2s ease;
+    text-decoration: none;
+    color: black;
+    font-family: 'Courier Prime', monospace;
+}
+
+.nasa-url:hover {
+  text-decoration: underline;
+  color: #3b77d0; 
+}
+
+.nasa-link {
+  text-decoration: none;
+  color: #3b77d0;
+  font-weight: bold;
+}
+
+.nasa-link:hover {
+  text-decoration: underline;
+}
+
+

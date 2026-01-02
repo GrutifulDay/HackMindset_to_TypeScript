@@ -1,0 +1,21 @@
+{
+    "year": 2025,
+    "month": 12,
+    "day": 1,
+  
+    "title": {
+      "cz": "Demo verze: Co jsou cookies a proč existují?",
+      "en": "Demo version: What are cookies and why do they exist?"
+    },
+  
+    "content": {
+      "cz": "Cookies jsou malé soubory, které si web uloží do tvého prohlížeče, aby si pamatoval přihlášení, jazyk nebo obsah košíku. Některé ale sledují, jaké stránky navštěvuješ napříč celým internetem — díky nim ví reklamy víc, než jsi jim kdy řekla.",
+      "en": "Cookies are small files websites save in your browser to remember logins, language or shopping carts. Some, however, track which pages you visit across the entire internet — that’s how ads know more than you ever told them."
+    },
+  
+    "recommendation": {
+      "cz": "V anonymním režimu se cookies po zavření smažou. V běžném režimu můžeš sledovací cookies blokovat v nastavení prohlížeče.",
+      "en": "In private mode, cookies are deleted when you close the window. In normal mode, you can block tracking cookies in your browser settings."
+    }
+  }
+  

@@ -1,0 +1,37 @@
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-8px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.modal-content {
+  text-align: center;
+}
+
+.language-buttons {
+  display: flex;
+  gap: 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 22px;
+}
+
+.lang-button {
+  background-color: #ffd6e8 ;
+  color: rgb(39 62 100);
+  border: none;
+  font-weight: bold;
+  border-radius: 12px;
+  padding: 12px 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  font-size: 1rem;
+  min-width: 120px;
+  text-transform: uppercase;
+}
+
+.lang-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  background-color: #ffe5f0; 
+}
+

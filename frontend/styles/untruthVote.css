@@ -1,0 +1,23 @@
+.untruth-btn {
+    background-color: #a3cce9;       
+    color: #273E64;            
+    font-weight: bold;
+    padding: 8px 14px;
+    border: none;
+    border-radius: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    transition: background-color 0.2s ease;
+}
+
+.untruth-btn:hover {
+    background-color: #c6e2f5;
+    cursor: pointer;
+}
+
+.untruth-btn:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}

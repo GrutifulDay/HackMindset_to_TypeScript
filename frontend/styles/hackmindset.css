@@ -1,0 +1,12 @@
+/* linerani gradient cara pod logem */
+.hack-title::after {
+    content: "";
+    display: block;
+    height: 2px;
+    margin: 1px auto 8px auto;
+    width: 150%; 
+    background: linear-gradient(to right, transparent, #e9e9f2 40%, #e9e9f2 60%, transparent);
+    transform: translateX(-15%); 
+}
+
+

@@ -1,0 +1,53 @@
+{
+  "manifest_version": 3,
+  "name": "HackMindset_DemoVersion",
+  "version": "1.0",
+  "description": "A daily extension with space photos, historical facts, and technology insights.",
+
+  "action": {
+    "default_icon": {
+      "16": "frontend/assets/icons/icon16.png",
+      "48": "frontend/assets/icons/icon48.png"
+    },
+    "default_popup": "frontend/app/index.html"
+  },
+
+  "background": {
+    "service_worker": "frontend/app/background.js",
+    "type": "module"
+  },
+
+  "permissions": [
+    "storage",
+    "scripting",
+    "alarms",
+    "tabs",
+    "webNavigation"
+  ],
+
+  "host_permissions": [
+    "https://api.nasa.gov/*"
+  ],
+
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "frontend/assets/icons/logo-bulb.svg",
+        "frontend/assets/sound.svg",
+        "frontend/assets/sounds/dialup.mp3"
+      ],
+      "matches": ["*://*.instagram.com/*"]
+    }
+  ],
+
+  "content_scripts": [
+    {
+      "matches": ["*://*.instagram.com/*"],
+      "js": ["frontend/app/content.js"]
+    }
+  ],
+
+  "content_security_policy": {
+    "extension_pages": "script-src 'self'; object-src 'none'; style-src 'self'"
+  }
+}
