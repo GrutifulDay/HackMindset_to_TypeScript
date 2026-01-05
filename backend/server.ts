@@ -1,9 +1,12 @@
 // dotevn
 import { PORT, DEMO_MODE, NODE_ENV } from "./config.js"
 
+// importy TS 
+import type { Request } from "express";
+
 // node token = util
 import util from "util";
-global.util = util;
+// global.util = util;
 
 import { debug, info, warn, error } from "./utils/logger.js";
 
@@ -147,12 +150,16 @@ app.get("/health", async (_req, res) => {
   try {
     return res.status(200).json({ status: "ok" });
   } catch (err) {
-    if (err.message.includes("timeout")) {
+    const message = 
+      err instanceof Error
+          ? err.message
+          : String(err)
+    if (message.includes("timeout")) {
       warn("⏱️ Mongo ping timeout");
       return res.status(504).json({ status: "timeout", detail: "MongoDB did not respond in time" });
     }
-    error("💥 /health error:", err.message);
-    return res.status(500).json({ status: "error", detail: err.message });
+    error("💥 /health error:", message);
+    return res.status(500).json({ status: "error", detail: message });
   }
 });
 
@@ -191,7 +198,7 @@ app.use(express.json({ limit: "25kb" }));
 
 // Hlavičky a logování (jen jednou)
 app.use(captureHeaders({
-  notifyOn: (req) => {
+  notifyOn: (req: Request) => {
     const ua = (req.get("User-Agent") || "").toLowerCase();
     const hasPostman = !!req.headers["postman-token"];
     const isPostmanUA = ua.includes("postman");
@@ -219,7 +226,9 @@ app.use("/api", untruthLimitRoutes)
 
 // Debug vypis testovacich endpointu
 try {
-  const routes = app._router?.stack?.map(r => r?.route?.path).filter(Boolean)
+  const routes = app._router?.stack
+  ?.map((r: unknown) => (r as { route?: { path?: string } })?.route?.path)
+  .filter(Boolean)
   if (routes?.length) debug(routes)
 } catch { /* ignore */ }
 

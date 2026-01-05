@@ -14,7 +14,10 @@ export const config = {
 };
 
 // PORT
-export const PORT = process.env.PORT || 3000;
+export const PORT = 
+  process.env.PORT !== undefined
+    ? parseInt(process.env,PORT, 10)
+    : 3000
 
 // ------------ URL VYVOJ / PRODUKCE -------------
 export const API_BASE_URL = process.env.API_BASE_URL || "https://localhost:3000/api";
