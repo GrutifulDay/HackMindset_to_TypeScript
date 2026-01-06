@@ -1,5 +1,6 @@
 import { notifyBlockedIP } from "../utils/discordNotification.js";
 import { debug } from "../utils/logger.js";
+import type { BlockMeta } from "../types/discord.js";
 
 // Jednoducha pametova revokace JWT tokenu
 // Slouzi k okamzitemu zneplatneni tokenu (napr. pri podezrelem chovani)
@@ -11,7 +12,7 @@ const revokedTokens = new Set();
 // Revokace tokenu podle JTI
 // Token je oznacen jako neplatny a nelze ho dale pouzit
 // ------------------------------------------------------------
-export function revokeToken(jti, meta = {}) {
+export function revokeToken(jti: string, meta: BlockMeta = {}) {
   revokedTokens.add(jti);
   debug("🚫 Revokován token s JTI:", jti);
 
@@ -24,9 +25,10 @@ export function revokeToken(jti, meta = {}) {
     method: meta.method || "REVOKE",
     path: meta.path || "/api/revoke-token",
     headers: meta.headers || {},
+    requests: []
   }).catch(() => {});
 }
 
-export function isRevoked(jti) {
+export function isRevoked(jti: string) {
   return revokedTokens.has(jti);
 }

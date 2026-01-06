@@ -3,6 +3,15 @@ import { debug } from "./utils/logger.js";
 dotenv.config();
 
 // ── ZÁKLADNÍ NASTAVENÍ
+function requiredEnv(name: string) {
+  const value = process.env[name];
+  if (!value) {
+    throw new Error(`${name} is missing in environment variables`);
+  }
+  return value;
+}
+
+
 export const NODE_ENV = process.env.NODE_ENV || "development";
 export const DEBUG = process.env.DEBUG === "true";
 export const DEMO_MODE = process.env.DEMO_MODE === "true";
@@ -14,10 +23,11 @@ export const config = {
 };
 
 // PORT
-export const PORT = 
+export const PORT =
   process.env.PORT !== undefined
-    ? parseInt(process.env,PORT, 10)
-    : 3000
+    ? parseInt(process.env.PORT, 10)
+    : 3000;
+
 
 // ------------ URL VYVOJ / PRODUKCE -------------
 export const API_BASE_URL = process.env.API_BASE_URL || "https://localhost:3000/api";
@@ -47,10 +57,15 @@ export const TOKEN_IP_CITY = process.env.TOKEN_IP_CITY || "";
 export const SHARED_KEY = process.env.SHARED_KEY || "";
 
 // JWT token 
-export const JWT_SECRET = process.env.JWT_SECRET
+export const JWT_SECRET = requiredEnv("JWT_SECRET")
 
-export const EXTENSION_SIGNATURE = process.env.EXTENSION_SIGNATURE
-debug("🔑 EXTENSION_SIGNATURE (backend):", JSON.stringify(EXTENSION_SIGNATURE));
+export const EXTENSION_SIGNATURE = (() => {
+  const value = process.env.EXTENSION_SIGNATURE;
+  if (!value) {
+    throw new Error("EXTENSION_SIGNATURE is missing in environment variables");
+  }
+  return value;
+})();
 
 // Discord
 export const DISCORD_WEBHOOK_URL = process.env.DISCORD_WEBHOOK_URL || "";

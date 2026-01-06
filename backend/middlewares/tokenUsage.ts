@@ -2,6 +2,10 @@
 import { revokeToken } from "./tokenRevocation.js";
 import { notifyBlockedIP } from "../utils/discordNotification.js";
 import { debug, warn } from "../utils/logger.js";
+import type { Request, Response, NextFunction } from "express";
+import type { TokenUsageInput } from "../types/jwt.js";
+import type { BlockedIPNotification } from "../types/discord.js"
+
 
 // Middleware pro sledovani chovani JWT tokenu
 // Sleduje, odkud a jak casto je token pouzivan
@@ -17,7 +21,7 @@ const MAX_UAS = 5;                // víc než X UA = podezrele
 // pocet requestu ve WINDOW_MS - casove okno ve kterem sleduje chovani tokenu
 const MAX_REQUESTS = 500;   
 
-export function registerTokenUsage({ jti, ip, userAgent, path }) {
+export function registerTokenUsage({ jti, ip, userAgent, path }: TokenUsageInput) {
   if (!jti) return;
 
   const now = Date.now();
@@ -67,6 +71,7 @@ export function registerTokenUsage({ jti, ip, userAgent, path }) {
       path,
       city: "Neznámé",
       headers: {},
+      requests: []
     }).catch(()=>{});
     return true;
   }
@@ -75,6 +80,7 @@ export function registerTokenUsage({ jti, ip, userAgent, path }) {
   if (info.uas.size > MAX_UAS) {
     warn(`⚠️ Revoking token ${jti} — multiple UAs (${[...info.uas].join(",")})`);
     revokeToken(jti);
+    
     notifyBlockedIP?.({
       ip: ip || "unknown",
       reason: `Token used with multiple User-Agents (${[...info.uas].join(",")})`,
@@ -83,6 +89,7 @@ export function registerTokenUsage({ jti, ip, userAgent, path }) {
       path,
       city: "Neznámé",
       headers: {},
+      requests: []
     }).catch(()=>{});
     return true;
   }
@@ -99,6 +106,7 @@ export function registerTokenUsage({ jti, ip, userAgent, path }) {
       path,
       city: "Neznámé",
       headers: {},
+      requests: []
     }).catch(()=>{});
     return true;
   }
@@ -106,6 +114,6 @@ export function registerTokenUsage({ jti, ip, userAgent, path }) {
   return false;
 }
 
-export function getUsageInfo(jti) {
+export function getUsageInfo(jti: string) {
   return usage.get(jti);
 }

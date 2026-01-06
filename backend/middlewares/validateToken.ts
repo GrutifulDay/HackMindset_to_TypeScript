@@ -1,12 +1,16 @@
 import { EXTENSION_SIGNATURE } from "../config.js";
 import { debug, warn } from "../utils/logger.js";
+import type { Request, Response, NextFunction } from "express";
 
 // Jednoducha validace pristupu pomoci sdileneho tajneho klice
 // Slouzi jako lehka ochrana endpointu bez JWT 
 // (napr. interni nebo servisni volani)
 
-export function validateToken() {
-  return function (req, res, next) {
+export function validateToken(
+    _signature: string, 
+    _description: string
+  ) {
+  return function (req: Request, res: Response, next: NextFunction) {
 
     const raw = req.headers.authorization || "";
     const authValue = raw.startsWith("Bearer ")

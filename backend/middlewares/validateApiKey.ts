@@ -5,20 +5,23 @@ import { getCityByIP } from "../utils/getCityByIP.js";
 import { CHROME_EXTENSION_ALL_URL, JWT_SECRET } from "../config.js";
 import { notifyBlockedIP } from "../utils/discordNotification.js";  
 import { redactHeaders } from "../utils/redact.js";
-import { isRevoked } from "../middlewares/tokenRevocation.js"
-import { registerTokenUsage } from "../middlewares/tokenUsage.js";
+import { isRevoked } from "./tokenRevocation.js"
+import { registerTokenUsage } from "./tokenUsage.js";
 import { debug, warn } from "../utils/logger.js";
 import { DEBUG, NODE_ENV, DEMO_MODE, API_BASE_URL } from "../config.js";
+import type { Request, Response, NextFunction } from "express";
+import type { TokenPayload } from "../types/jwt.js"
+import type { BlockedIPNotification } from "../types/discord.js"
 
 // Centralni bezpecnostni middleware pro API
 // Overuje JWT tokeny z Chrome Extension, hlida zneuziti tokenu,
 // kontroluje IP blacklist a pri podezrelem chovani request blokuje
 // Zaroven neblokuje extension - pouze blokace z venku 
 
-export function validateApiKey(routeDescription) {
+export function validateApiKey(routeDescription: string) {
   // 🔧 DEMO MODE → prekoci veskerou bezpecnost, povoli request
   if (DEMO_MODE) {
-    return function(req, res, next) {
+    return function(req: Request, res: Response, next: NextFunction) {
       req.tokenPayload = { demo: true };
       return next();
     };
@@ -27,11 +30,18 @@ export function validateApiKey(routeDescription) {
 
   debug("validateApiKey funguje");
 
-  return async function (req, res, next) {
+  return async function (req: Request, res: Response, next: NextFunction) {
+    const forwarded = req.headers["x-forwarded-for"];
+
     const userIP =
-      req.headers["x-forwarded-for"]?.split(",")[0]?.trim() ||
+      (typeof forwarded === "string"
+        ? forwarded.split(",")[0].trim()
+        : Array.isArray(forwarded)
+          ? forwarded[0]
+          : undefined) ||
       req.socket?.remoteAddress ||
       "neznámá IP";
+
 
     const userAgentString = req.get("User-Agent") || "Neznámý";
     const origin = req.headers.origin || "";
@@ -43,10 +53,11 @@ export function validateApiKey(routeDescription) {
       : "";
 
       // Vyjimka pokud ma request platny JWT z extension → povoli dal, i kdyz je IP blokovana 
-      if (req.tokenPayload?.sub === "chrome-extension") {
+      if (req.tokenPayload && "sub" in req.tokenPayload && req.tokenPayload.sub === "chrome-extension") {
         debug("🧩 validateApiKey: požadavek z rozšíření s platným JWT → povoleno (přeskakuji IP blacklist)");
         return next();
       }
+      
   
       // kontrola IP blacklistu - adresa je na BL 
       if (await isBlacklisted(userIP)) {
@@ -71,14 +82,20 @@ export function validateApiKey(routeDescription) {
       // isLikelyFromChrome;
 
     // overeni JWT tokenu
-    let decodedToken;
+    let decodedToken: TokenPayload;
     try {
-      decodedToken = jwt.verify(tokenFromHeader, JWT_SECRET);
+      const verified = jwt.verify(tokenFromHeader, JWT_SECRET);
+
+      if (typeof verified === "string") {
+        return res.status(403).json({ error: "Invalid JWT token" });
+      }
+
+    decodedToken = verified as TokenPayload;
 
       // kontrola audience pro vydani tokenu jen pro muj server v rozsireni 
     if (decodedToken.aud !== API_BASE_URL) {
       warn("❌ Token má špatnou audience:");
-      warn("→ expected:", expectedAudience);
+      warn("→ expected:", API_BASE_URL);
       warn("→ received:", decodedToken.aud);
       return await blockRequest(
         req,
@@ -119,7 +136,7 @@ if (abuseDetected) {
   debug("✅ JWT není revokován:", decodedToken.jti);
 
     } catch (err) {
-      warn("❌ Neplatný JWT token:", err.message);
+      warn("❌ Neplatný JWT token:", String(err));
       return await blockRequest(req, res, userIP, userAgentString, routeDescription, "Invalid JWT token");
     }
 
@@ -138,30 +155,39 @@ if (abuseDetected) {
   };
 }
 
-async function blockRequest(req, res, userIP, userAgentString, routeDescription, reason = "Access denied") {
-  const parser = new UAParser(userAgentString);
-  const result = parser.getResult();
-  const city = await getCityByIP(userIP);
+async function blockRequest(req: Request, 
+  res: Response, 
+  userIP: string, 
+  userAgentString: string, 
+  routeDescription: string, reason = "Access denied"
+  ) {
+    const parser = new UAParser(userAgentString);
+    const result = parser.getResult();
+    const city = await getCityByIP(userIP);
 
-  await addToBlacklist(userIP, routeDescription, {
-    userAgent: userAgentString,
-    browser: result.browser?.name || "Neznámý",
-    os: result.os?.name || "Neznámý",
-    deviceType: result.device?.type || "Neznámý",
-    city: city || "Neznámý",
-    method: req.method,
-    path: req.originalUrl
-  });
+    await addToBlacklist(userIP, routeDescription, {
+      userAgent: userAgentString,
+      browser: result.browser?.name || "Neznámý",
+      os: result.os?.name || "Neznámý",
+      deviceType: result.device?.type || "Neznámý",
+      city: city || "Neznámý",
+      method: req.method,
+      path: req.originalUrl
+    });
 
-  await notifyBlockedIP({
-    ip: userIP,
-    city: city || "Neznámé",
-    userAgent: userAgentString,
-    reason,
-    method: req.method,
-    path: req.originalUrl,
-    headers: redactHeaders(req.headers), 
-  });
+    const data: BlockedIPNotification = {
+      ip: userIP,
+      city: city || "Neznámé",
+      userAgent: userAgentString,
+      reason,
+      method: req.method,
+      path: req.originalUrl,
+      headers: redactHeaders(req.headers) as Record<string, unknown>,
+      requests: []
+    };
+    
+    await notifyBlockedIP(data);
+    
 
   return res.status(403).json({ error: "Access denied" });
 }

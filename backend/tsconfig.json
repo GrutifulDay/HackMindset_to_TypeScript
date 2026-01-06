@@ -11,6 +11,11 @@
       "allowJs": true,
       "checkJs": false
     },
-    "include": ["server.ts"]
-  }
+    "include": [
+      "server.ts",
+      "routes/**/*.ts",
+      "middlewares/**/*.ts",
+      "types/**/*.d.ts"
+    ]
+}
   
